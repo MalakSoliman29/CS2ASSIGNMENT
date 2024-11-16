@@ -1,0 +1,42 @@
+#include <iostream>
+#include <string>
+#include <regex>
+#include <queue>
+#include <vector>
+#include <stdexcept>
+#include <cstdlib>
+#include <ctime>
+
+class Patient {
+private:
+    std::string id;
+    char gender;
+    std::string arrivalTime; // in HH:MM format
+    std::string type; // "Urgent" or "Normal"
+    int waitTime; // in minutes
+
+public:
+    Patient(std::string id, char gender, std::string arrivalTime, std::string type)
+        : id(id), gender(gender), arrivalTime(arrivalTime), type(type), waitTime(0) {
+        if (!validateID()) {
+            throw std::invalid_argument("Invalid Patient ID format.");
+        }
+    }
+
+    bool validateID() {
+        std::regex idPattern("^[0-9]{14}$");
+        return std::regex_match(id, idPattern);
+    }
+
+    void incrementWaitTime() { waitTime++; }
+
+    void getDetails() const {
+        std::cout << "ID: " << id << ", Gender: " << gender
+            << ", Arrival Time: " << arrivalTime
+            << ", Type: " << type << std::endl;
+    }
+
+    std::string getID() const { return id; }
+    std::string getType() const { return type; }
+    int getWaitTime() const { return waitTime; }
+};
