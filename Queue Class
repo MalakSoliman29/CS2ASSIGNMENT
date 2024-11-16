@@ -1,0 +1,53 @@
+class Queue {
+private:
+    std::queue<Patient> urgentQueue;
+    std::queue<Patient> normalQueue;
+
+public:
+    void enqueue(Patient patient) {
+        if (patient.getType() == "Urgent") {
+            urgentQueue.push(patient);
+        }
+        else {
+            normalQueue.push(patient);
+        }
+    }
+
+    Patient dequeue() {
+        if (!urgentQueue.empty()) {
+            Patient p = urgentQueue.front();
+            urgentQueue.pop();
+            return p;
+        }
+        else if (!normalQueue.empty()) {
+            Patient p = normalQueue.front();
+            normalQueue.pop();
+            return p;
+        }
+        throw std::out_of_range("No patients to serve.");
+    }
+
+    bool isEmpty() const {
+        return urgentQueue.empty() && normalQueue.empty();
+    }
+
+    std::vector<Patient> getUrgentPatients() const {
+        std::vector<Patient> patients;
+        std::queue<Patient> tempQueue = urgentQueue;
+        while (!tempQueue.empty()) {
+            patients.push_back(tempQueue.front());
+            tempQueue.pop();
+        }
+        return patients;
+    }
+
+    std::vector<Patient> getNormalPatients() const {
+        std::vector<Patient> patients;
+        std::queue<Patient> tempQueue = normalQueue;
+        while (!tempQueue.empty()) {
+            patients.push_back(tempQueue.front());
+            tempQueue.pop();
+        }
+        return patients;
+    }
+};
