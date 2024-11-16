@@ -1,0 +1,75 @@
+class Scheduler {
+private:
+    std::vector<Patient> patients;
+    Queue queue;
+    int totalPatients = 0;
+    int urgentCount = 0;
+    int normalCount = 0;
+    int totalWaitTime = 0;
+
+public:
+    void addPatient(const Patient& patient) {
+        patients.push_back(patient);
+        totalPatients++;
+        if (patient.getType() == "Urgent") {
+            urgentCount++;
+        }
+        else {
+            normalCount++;
+        }
+    }
+
+    void dispatchPatients() {
+        for (auto& patient : patients) {
+            queue.enqueue(patient);
+        }
+        patients.clear(); // Clear vector after dispatching
+    }
+
+    void servePatients() {
+        if (!queue.isEmpty()) {
+            try {
+                Patient patient = queue.dequeue();
+                std::cout << "Done Serving Patient: " << patient.getID() << std::endl;
+                totalWaitTime += patient.getWaitTime();
+            }
+            catch (std::out_of_range& e) {
+                std::cout << e.what() << std::endl;
+            }
+        }
+    }
+
+    void incrementWaitTimes() {
+        auto urgentPatients = queue.getUrgentPatients();
+        for (auto& patient : urgentPatients) {
+            patient.incrementWaitTime();
+        }
+        auto normalPatients = queue.getNormalPatients();
+        for (auto& patient : normalPatients) {
+            patient.incrementWaitTime();
+        }
+    }
+
+    void displayStatus() const {
+        std::cout << "Waiting Urgent Patient IDs: ";
+        auto urgentPatients = queue.getUrgentPatients();
+        for (const auto& patient : urgentPatients) {
+            std::cout << patient.getID() << " ";
+        }
+        std::cout << "\nWaiting Normal Patient IDs: ";
+        auto normalPatients = queue.getNormalPatients();
+        for (const auto& patient : normalPatients) {
+            std::cout << patient.getID() << " ";
+        }
+        std::cout << "\n---------------------------------\n";
+    }
+
+    void displaySummary() const {
+        std::cout << "Total Patients: " << totalPatients << "\n";
+        std::cout << "Urgent Cases: " << urgentCount << "\n";
+        std::cout << "Normal Cases: " << normalCount << "\n";
+        if (totalPatients > 0) {
+            std::cout << "Average Waiting Time: " << static_cast<double>(totalWaitTime) / totalPatients << " minutes\n";
+        }
+    }
+};
