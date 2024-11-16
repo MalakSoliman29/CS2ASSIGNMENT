@@ -1,0 +1,42 @@
+int main() {
+    Scheduler scheduler;
+    std::string id, arrivalTime, type;
+    char gender;
+
+    // Input patient data
+    for (int i = 0; i < 3; ++i) { // Example: Add 5 patients
+        std::cout << "Enter Patient ID: ";
+        std::cin >> id;
+        std::cout << "Enter Gender (M/F): ";
+        std::cin >> gender;
+        std::cout << "Enter Arrival Time (HH:MM): ";
+        std::cin >> arrivalTime;
+        std::cout << "Enter Type (Urgent/Normal): ";
+        std::cin >> type;
+
+        try {
+            Patient patient(id, gender, arrivalTime, type);
+            scheduler.addPatient(patient);
+        }
+        catch (const std::invalid_argument& e) {
+            std::cerr << e.what() << std::endl;
+        }
+    }
+
+    scheduler.dispatchPatients();
+
+    // Simulation loop
+    std::cout << "Press Enter to advance 1 minute...\n";
+    while (true) {
+        std::cin.get(); // Wait for user input to advance time
+
+        scheduler.incrementWaitTimes();
+        scheduler.displayStatus();
+        scheduler.servePatients();
+    }
+
+    // Display summary at the end of the simulation
+    scheduler.displaySummary();
+
+    return 0;
+}
